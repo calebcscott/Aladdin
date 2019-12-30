@@ -32,7 +32,7 @@ int main(int argc, char* argv[]){
     exit(0);
   }
  
-  if(init()==-1){
+  if(read_commands(NULL)==-1){
     printf("Warning: couldn't load commands\n");
   }
   
@@ -99,7 +99,7 @@ int analyseInput(char* strinput){
       return -1;
     } 
   }else if (strcmp(token, "quit\n")==0){
-    finish();
+    close_commands();
     pthread_kill(connData->writerThread, SIGTERM);
     pthread_kill(connData->readerThread, SIGTERM);
     printf("-------------------\n");
@@ -121,12 +121,25 @@ int analyseInput(char* strinput){
       printf("addcmd <command> <message>\n");
       return 0;
     }
+    
+    
+    //If add_command fails return -1
+    if(add_command(commandName, body) > 0) {
+      return -1;
+    }
+    
+    /* Code above performs function commenting out for testing
     if(writeToFile(commandName, body)==-1){
       return -1;
     }
+    */
+    
     //TODO 34: hacky way to add new command to struct of commands
-    finish();
-    init();
+    //add_command should fix commenting out for testing
+    //finish();
+    //init();
+
+
     return 0;
   }
   
@@ -165,11 +178,13 @@ void* readerTHEThread(void* context){
 	}
 	
       }else if(test_command(command, outputmsg, 100)==1){
-	char* addr = (char *)malloc(1024);
-	sprintf(addr, "PRIVMSG %s :%s\r\n", current, outputmsg); 
+        fprintf(stderr, "Found command with message: %s", outputmsg);
+	      char* addr = (char *)malloc(1024);
+	      sprintf(addr, "PRIVMSG %s :%s\r\n", current, outputmsg); 
         sendMsg(addr);
-	free(addr);
+	      free(addr);
       }
+      fprintf(stderr, "Found command not ran\n");
       free(command);
     }
   }
