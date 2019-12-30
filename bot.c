@@ -178,13 +178,11 @@ void* readerTHEThread(void* context){
 	}
 	
       }else if(test_command(command, outputmsg, 100)==1){
-        fprintf(stderr, "Found command with message: %s", outputmsg);
 	      char* addr = (char *)malloc(1024);
 	      sprintf(addr, "PRIVMSG %s :%s\r\n", current, outputmsg); 
         sendMsg(addr);
 	      free(addr);
       }
-      fprintf(stderr, "Found command not ran\n");
       free(command);
     }
   }

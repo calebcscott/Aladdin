@@ -52,7 +52,7 @@
 #define cmdFile "commands.csv"
 #define MAX_LEN 4096
 
-#define DEBUG
+//#define DEBUG
 
 //struct for Library calls (Maybe extern or put in header file for callee)
 typedef struct {
